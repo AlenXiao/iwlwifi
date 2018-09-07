@@ -4387,8 +4387,21 @@ static void __ieee80211_rx_handle_packet(struct ieee80211_hw *hw,
 	rx.local = local;
 	rx.napi = napi;
 
-	if (ieee80211_is_data(fc) || ieee80211_is_mgmt(fc))
-		I802_DEBUG_INC(local->dot11ReceivedFragmentCount);
+    if (ieee80211_is_data(fc) || ieee80211_is_mgmt(fc)) {
+        int i = 0;
+        char *char_str = "0123456789ABCDEF";
+        char *data_buf = skb->data;
+        char pr_buf[sizeof(struct ieee80211_hdr) * 3 + 1] = {0};
+        struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
+        I802_DEBUG_INC(local->dot11ReceivedFragmentCount);
+        printk("\nrx data or mgmt, rssi:%d", status->signal);
+        for (i = 0; i < sizeof(struct ieee80211_hdr); i ++) {
+            pr_buf[i * 3] = char_str[data_buf[i] & 0x0F];
+            pr_buf[i * 3 + 1] = char_str[(data_buf[i] & 0xF0) >> 4];
+            pr_buf[i * 3 + 2] = ' ';
+        }
+        printk("%s\n", pr_buf);
+    }
 
 	if (ieee80211_is_mgmt(fc)) {
 		/* drop frame if too short for header */
