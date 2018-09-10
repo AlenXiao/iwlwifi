@@ -68,7 +68,7 @@
 /* Scan Commands, Responses, Notifications */
 
 /* Max number of IEs for direct SSID scans in a command */
-#define PROBE_OPTION_MAX		20
+#define PROBE_OPTION_MAX		64
 
 /**
  * struct iwl_ssid_ie - directed scan network information element
@@ -91,7 +91,7 @@ struct iwl_ssid_ie {
 /* scan offload */
 #define IWL_SCAN_MAX_BLACKLIST_LEN	64
 #define IWL_SCAN_SHORT_BLACKLIST_LEN	16
-#define IWL_SCAN_MAX_PROFILES		11
+#define IWL_SCAN_MAX_PROFILES		14
 #define SCAN_OFFLOAD_PROBE_REQ_SIZE	512
 
 /* Default watchdog (in MS) for scheduled scan iteration */

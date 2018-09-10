@@ -38,6 +38,8 @@
 #include "wme.h"
 #include "rate.h"
 
+void kernel_print_packet(struct sk_buff *skb);
+
 static inline void ieee80211_rx_stats(struct net_device *dev, u32 len)
 {
 	struct pcpu_sw_netstats *tstats = this_cpu_ptr(netdev_tstats(dev));
@@ -3600,6 +3602,8 @@ static void ieee80211_rx_handlers(struct ieee80211_rx_data *rx,
 		 * same TID from the same station
 		 */
 		rx->skb = skb;
+        printk("%s 1\n", __func__);
+        kernel_print_packet(skb);
 
 		CALL_RXH(ieee80211_rx_h_check_more_data);
 		CALL_RXH(ieee80211_rx_h_uapsd_and_pspoll);
@@ -3625,6 +3629,8 @@ static void ieee80211_rx_handlers(struct ieee80211_rx_data *rx,
 		CALL_RXH(ieee80211_rx_h_userspace_mgmt);
 		CALL_RXH(ieee80211_rx_h_action_return);
 		CALL_RXH(ieee80211_rx_h_mgmt);
+        printk("%s 2\n", __func__);
+        kernel_print_packet(skb);
 
  rxh_next:
 		ieee80211_rx_handlers_result(rx, res);
@@ -3648,6 +3654,9 @@ static void ieee80211_invoke_rx_handlers(struct ieee80211_rx_data *rx)
 		if (res != RX_CONTINUE)	\
 			goto rxh_next;  \
 	} while (0)
+
+    printk("%s\n", __func__);
+    kernel_print_packet(rx->skb);
 
 	CALL_RXH(ieee80211_rx_h_check_dup);
 	CALL_RXH(ieee80211_rx_h_check);
@@ -4363,6 +4372,43 @@ static bool ieee80211_prepare_and_rx_handle(struct ieee80211_rx_data *rx,
 	return true;
 }
 
+void kernel_print_packet(struct sk_buff *skb)
+{
+    if (skb == NULL)
+        return;
+
+    do {
+	    __le16 fc;
+        int i = 0;
+        char *ft = NULL;
+        char *data_buf = skb->data;
+        char *char_str = "0123456789ABCDEF";
+        char pr_buf[sizeof(struct ieee80211_hdr) * 3 + 1] = {0};
+        struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
+
+        if (data_buf == NULL)
+            break;
+
+	    fc = ((struct ieee80211_hdr *)skb->data)->frame_control;
+        if (ieee80211_is_data(fc)) {
+            ft = "d";
+        } else if (ieee80211_is_probe_resp(fc)) {
+            ft = "rp";
+        } else if (ieee80211_is_probe_req(fc)) {
+            ft = "rq";
+        } else if (ieee80211_is_beacon(fc)) {
+            ft = "b";
+        }
+
+        for (i = 0; i < sizeof(struct ieee80211_hdr); i ++) {
+            pr_buf[i * 3] = char_str[data_buf[i] & 0x0F];
+            pr_buf[i * 3 + 1] = char_str[(data_buf[i] & 0xF0) >> 4];
+            pr_buf[i * 3 + 2] = ' ';
+        }
+        printk("rssi:%d, %s, payload:%s\n", status ? status->signal : -1, ft ? ft : "n", pr_buf);
+    } while (0);
+}
+
 /*
  * This is the actual Rx frames handler. as it belongs to Rx path it must
  * be called with rcu_read_lock protection.
@@ -4388,19 +4434,9 @@ static void __ieee80211_rx_handle_packet(struct ieee80211_hw *hw,
 	rx.napi = napi;
 
     if (ieee80211_is_data(fc) || ieee80211_is_mgmt(fc)) {
-        int i = 0;
-        char *char_str = "0123456789ABCDEF";
-        char *data_buf = skb->data;
-        char pr_buf[sizeof(struct ieee80211_hdr) * 3 + 1] = {0};
-        struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
         I802_DEBUG_INC(local->dot11ReceivedFragmentCount);
-        printk("\nrx data or mgmt, rssi:%d", status->signal);
-        for (i = 0; i < sizeof(struct ieee80211_hdr); i ++) {
-            pr_buf[i * 3] = char_str[data_buf[i] & 0x0F];
-            pr_buf[i * 3 + 1] = char_str[(data_buf[i] & 0xF0) >> 4];
-            pr_buf[i * 3 + 2] = ' ';
-        }
-        printk("%s\n", pr_buf);
+        printk("rx data or mgmt");
+        kernel_print_packet(skb);
     }
 
 	if (ieee80211_is_mgmt(fc)) {
@@ -4432,6 +4468,7 @@ static void __ieee80211_rx_handle_packet(struct ieee80211_hw *hw,
 		if (pubsta) {
 			rx.sta = container_of(pubsta, struct sta_info, sta);
 			rx.sdata = rx.sta->sdata;
+            printk("rx data");
 			if (ieee80211_prepare_and_rx_handle(&rx, skb, true))
 				return;
 			goto out;
@@ -4515,6 +4552,8 @@ void ieee80211_rx_napi(struct ieee80211_hw *hw, struct ieee80211_sta *pubsta,
 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
 
 	WARN_ON_ONCE(softirq_count() == 0);
+    printk("\nrx napi");
+    kernel_print_packet(skb);
 
 	if (WARN_ON(status->band >= NUM_NL80211_BANDS))
 		goto drop;

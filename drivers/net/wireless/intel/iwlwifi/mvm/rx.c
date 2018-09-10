@@ -141,6 +141,7 @@ static void iwl_mvm_pass_packet_to_mac80211(struct iwl_mvm *mvm,
 				fraglen, rxb->truesize);
 	}
 
+    printk("m2napi");
 	ieee80211_rx_napi(mvm->hw, sta, skb, napi);
 }
 
@@ -368,6 +369,7 @@ void iwl_mvm_rx_rx_mpdu(struct iwl_mvm *mvm, struct napi_struct *napi,
 		IWL_ERR(mvm, "alloc_skb failed\n");
 		return;
 	}
+    printk("rx mpdu");
 
 	rx_status = IEEE80211_SKB_RXCB(skb);
 
