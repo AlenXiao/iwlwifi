@@ -733,6 +733,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 	u32 min_backoff;
 	enum iwl_amsdu_size rb_size_default;
 
+    printk("%s, %u\n", __func__, __LINE__);
 	/*
 	 * We use IWL_MVM_STATION_COUNT to check the validity of the station
 	 * index all over the driver - check that its value corresponds to the
@@ -749,6 +750,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 	if (!hw)
 		return NULL;
 
+    printk("%s, %u\n", __func__, __LINE__);
 	if (cfg->max_rx_agg_size)
 		hw->max_rx_aggregation_subframes = cfg->max_rx_agg_size;
 	else
@@ -761,6 +763,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 
 	op_mode = hw->priv;
 
+    printk("%s, %u\n", __func__, __LINE__);
 	mvm = IWL_OP_MODE_GET_MVM(op_mode);
 	mvm->dev = trans->dev;
 	mvm->trans = trans;
@@ -774,6 +777,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 	mvm->init_status = 0;
 
 	if (iwl_mvm_has_new_rx_api(mvm)) {
+        printk("%s, %u\n", __func__, __LINE__);
 		op_mode->ops = &iwl_mvm_ops_mq;
 		trans->rx_mpdu_cmd_hdr_size =
 			(trans->cfg->device_family >=
@@ -781,6 +785,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 			sizeof(struct iwl_rx_mpdu_desc) :
 			IWL_RX_DESC_SIZE_V1;
 	} else {
+        printk("%s, %u\n", __func__, __LINE__);
 		op_mode->ops = &iwl_mvm_ops;
 		trans->rx_mpdu_cmd_hdr_size =
 			sizeof(struct iwl_rx_mpdu_res_start);
@@ -883,6 +888,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 		trans_cfg.rx_buf_size = rb_size_default;
 	}
 
+    printk("%s, %u\n", __func__, __LINE__);
 	trans->wide_cmd_header = true;
 	trans_cfg.bc_table_dword =
 		mvm->trans->cfg->device_family < IWL_DEVICE_FAMILY_22560;
@@ -1010,6 +1016,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 	iwl_mvm_init_modparams(mvm);
 #endif
 
+    printk("%s, %u\n", __func__, __LINE__);
 	iwl_mvm_toggle_tx_ant(mvm, &mvm->mgmt_last_antenna_idx);
 
 	return op_mode;

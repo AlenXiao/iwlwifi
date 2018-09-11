@@ -1244,6 +1244,8 @@ static int iwl_mvm_mac_start(struct ieee80211_hw *hw)
 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
 	int ret;
 
+    printk("%s, %u\n", __func__, __LINE__);
+
 	/* Some hw restart cleanups must not hold the mutex */
 	if (test_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status)) {
 		/*
@@ -2803,6 +2805,8 @@ static int iwl_mvm_mac_hw_scan(struct ieee80211_hw *hw,
 {
 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
 	int ret;
+
+    printk("%s, %u\n", __func__, __LINE__);
 
 	if (hw_req->req.n_channels == 0 ||
 	    hw_req->req.n_channels > mvm->fw->ucode_capa.n_scan_channels)

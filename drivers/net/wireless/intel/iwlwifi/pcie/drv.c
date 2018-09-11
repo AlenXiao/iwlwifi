@@ -737,6 +737,7 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 		return -EINVAL;
 
 	iwl_trans = iwl_trans_pcie_alloc(pdev, ent, cfg);
+    printk("%s, %u\n", __func__, __LINE__);
 	if (IS_ERR(iwl_trans))
 		return PTR_ERR(iwl_trans);
 
@@ -787,13 +788,17 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 	}
 #endif
 
+    printk("%s, %u\n", __func__, __LINE__);
 	pci_set_drvdata(pdev, iwl_trans);
+    printk("%s, %u\n", __func__, __LINE__);
 	iwl_trans->drv = iwl_drv_start(iwl_trans);
+    printk("%s, %u\n", __func__, __LINE__);
 
 	if (IS_ERR(iwl_trans->drv)) {
 		ret = PTR_ERR(iwl_trans->drv);
 		goto out_free_trans;
 	}
+    printk("%s, %u\n", __func__, __LINE__);
 
 	/* register transport layer debugfs here */
 	ret = iwl_trans_pcie_dbgfs_register(iwl_trans);
@@ -1084,6 +1089,7 @@ int __must_check iwl_pci_register_driver(void)
 {
 	int ret;
 	ret = pci_register_driver(&iwl_pci_driver);
+    printk("%s, %u\n", __func__, __LINE__);
 	if (ret)
 		pr_err("Unable to initialize PCI module\n");
 

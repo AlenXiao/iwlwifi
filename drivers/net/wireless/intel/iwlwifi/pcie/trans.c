@@ -2937,6 +2937,7 @@ int iwl_trans_pcie_dbgfs_register(struct iwl_trans *trans)
 	DEBUGFS_ADD_FILE(fh_reg, dir, 0400);
 	DEBUGFS_ADD_FILE(rfkill, dir, 0600);
 	DEBUGFS_ADD_FILE(monitor_data, dir, 0400);
+    printk("%s, %u\n", __func__, __LINE__);
 	return 0;
 
 err:

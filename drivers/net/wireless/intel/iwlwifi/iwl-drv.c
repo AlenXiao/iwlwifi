@@ -493,6 +493,7 @@ static int iwl_request_firmware(struct iwl_drv *drv, bool first)
 
 	IWL_DEBUG_INFO(drv, "attempting to load firmware '%s'\n",
 		       drv->firmware_name);
+    printk("%s, %u\n", __func__, __LINE__);
 
 	return request_firmware_nowait(THIS_MODULE, 1, drv->firmware_name,
 				       drv->trans->dev,
@@ -1915,6 +1916,7 @@ struct iwl_drv *iwl_drv_start(struct iwl_trans *trans)
 	iwl_tm_gnl_add(drv->trans);
 #endif
 
+    printk("%s, %u\n", __func__, __LINE__);
 	ret = iwl_request_firmware(drv, true);
 	if (ret) {
 		IWL_ERR(trans, "Couldn't request the fw\n");
@@ -2070,6 +2072,7 @@ static int __init iwl_drv_init(void)
 
 #ifdef CPTCFG_IWLWIFI_DEBUGFS
 	/* Create the root of iwlwifi debugfs subsystem. */
+    printk("%s, %u, debugfs_create_dir %s", __func__, __LINE__, DRV_NAME);
 	iwl_dbgfs_root = debugfs_create_dir(DRV_NAME, NULL);
 
 	if (!iwl_dbgfs_root)
