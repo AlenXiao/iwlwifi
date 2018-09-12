@@ -3,6 +3,7 @@
 obj-$(CPTCFG_IWLWIFI)	+= iwlwifi.o
 iwlwifi-objs		+= iwl-io.o
 iwlwifi-objs		+= iwl-drv.o
+iwlwifi-objs		+= awss.o
 iwlwifi-objs		+= iwl-debug.o
 iwlwifi-objs		+= iwl-eeprom-read.o iwl-eeprom-parse.o
 iwlwifi-objs		+= iwl-phy-db.o iwl-nvm-parse.o

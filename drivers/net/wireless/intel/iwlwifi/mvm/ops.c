@@ -137,6 +137,9 @@ static int __init iwl_mvm_init(void)
 	int ret;
 
 	ret = iwl_mvm_rate_control_register();
+
+    printk("%s, %u", __func__, __LINE__);
+
 	if (ret) {
 		pr_err("Unable to register rate control algorithm: %d\n", ret);
 		return ret;
@@ -739,6 +742,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 	 * array size.
 	 */
 	BUILD_BUG_ON(ARRAY_SIZE(mvm->fw_id_to_mac_id) != IWL_MVM_STATION_COUNT);
+    printk("%s, %u", __func__, __LINE__);
 
 	/********************************
 	 * 1. Allocating and configuring HW data
