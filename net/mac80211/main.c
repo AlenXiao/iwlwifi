@@ -520,6 +520,8 @@ struct ieee80211_hw *ieee80211_alloc_hw_nm(size_t priv_data_len,
 	struct wiphy *wiphy;
 	bool use_chanctx;
 
+    printk("%s, %u", __func__, __LINE__);
+
 	if (WARN_ON(!ops->tx || !ops->start || !ops->stop || !ops->config ||
 		    !ops->add_interface || !ops->remove_interface ||
 		    !ops->configure_filter))
