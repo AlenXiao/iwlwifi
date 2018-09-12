@@ -75,6 +75,7 @@
 #include "iwl-trans.h"
 #include "iwl-drv.h"
 #include "internal.h"
+#include "awss.h"
 
 #define IWL_PCI_DEVICE(dev, subdev, cfg) \
 	.vendor = PCI_VENDOR_ID_INTEL,  .device = (dev), \
@@ -735,6 +736,7 @@ static int iwl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 
 	if (WARN_ONCE(!cfg->csr, "CSR addresses aren't configured\n"))
 		return -EINVAL;
+    printk("++++++++++++++++++++++++++++++++++++++++iwl_pci_probe");
 
 	iwl_trans = iwl_trans_pcie_alloc(pdev, ent, cfg);
 	if (IS_ERR(iwl_trans))
@@ -1087,10 +1089,13 @@ int __must_check iwl_pci_register_driver(void)
 	if (ret)
 		pr_err("Unable to initialize PCI module\n");
 
+    ret = awss_create_device();
+
 	return ret;
 }
 
 void iwl_pci_unregister_driver(void)
 {
+    awss_destroy_device();
 	pci_unregister_driver(&iwl_pci_driver);
 }
