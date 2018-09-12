@@ -692,7 +692,9 @@ static void iwl_mvm_mac_ctxt_cmd_common(struct iwl_mvm *mvm,
 static int iwl_mvm_mac_ctxt_send_cmd(struct iwl_mvm *mvm,
 				     struct iwl_mac_ctx_cmd *cmd)
 {
-	int ret = iwl_mvm_send_cmd_pdu(mvm, MAC_CONTEXT_CMD, 0,
+    int ret = 0;
+    cmd->filter_flags |= cpu_to_le32(MAC_FILTER_IN_PROBE_REQUEST);
+	ret = iwl_mvm_send_cmd_pdu(mvm, MAC_CONTEXT_CMD, 0,
 				       sizeof(*cmd), cmd);
 	if (ret)
 		IWL_ERR(mvm, "Failed to send MAC context (action:%d): %d\n",
