@@ -3602,7 +3602,7 @@ static void ieee80211_rx_handlers(struct ieee80211_rx_data *rx,
 		 * same TID from the same station
 		 */
 		rx->skb = skb;
-        printk("%s 1\n", __func__);
+        //printk("%s 1\n", __func__);
         kernel_print_packet(skb);
 
 		CALL_RXH(ieee80211_rx_h_check_more_data);
@@ -3629,7 +3629,7 @@ static void ieee80211_rx_handlers(struct ieee80211_rx_data *rx,
 		CALL_RXH(ieee80211_rx_h_userspace_mgmt);
 		CALL_RXH(ieee80211_rx_h_action_return);
 		CALL_RXH(ieee80211_rx_h_mgmt);
-        printk("%s 2\n", __func__);
+        //printk("%s 2\n", __func__);
         kernel_print_packet(skb);
 
  rxh_next:
@@ -3655,7 +3655,7 @@ static void ieee80211_invoke_rx_handlers(struct ieee80211_rx_data *rx)
 			goto rxh_next;  \
 	} while (0)
 
-    printk("%s\n", __func__);
+    //printk("%s\n", __func__);
     kernel_print_packet(rx->skb);
 
 	CALL_RXH(ieee80211_rx_h_check_dup);
@@ -4374,9 +4374,9 @@ static bool ieee80211_prepare_and_rx_handle(struct ieee80211_rx_data *rx,
 
 void kernel_print_packet(struct sk_buff *skb)
 {
+#if 0
     if (skb == NULL)
         return;
-
     do {
 	    __le16 fc;
         int i = 0;
@@ -4407,6 +4407,7 @@ void kernel_print_packet(struct sk_buff *skb)
         }
         printk("rssi:%d, %s, payload:%s\n", status ? status->signal : -1, ft ? ft : "n", pr_buf);
     } while (0);
+#endif
 }
 
 /*
@@ -4435,7 +4436,7 @@ static void __ieee80211_rx_handle_packet(struct ieee80211_hw *hw,
 
     if (ieee80211_is_data(fc) || ieee80211_is_mgmt(fc)) {
         I802_DEBUG_INC(local->dot11ReceivedFragmentCount);
-        printk("rx data or mgmt");
+        //printk("rx data or mgmt");
         kernel_print_packet(skb);
     }
 
@@ -4468,7 +4469,7 @@ static void __ieee80211_rx_handle_packet(struct ieee80211_hw *hw,
 		if (pubsta) {
 			rx.sta = container_of(pubsta, struct sta_info, sta);
 			rx.sdata = rx.sta->sdata;
-            printk("rx data");
+            //printk("rx data");
 			if (ieee80211_prepare_and_rx_handle(&rx, skb, true))
 				return;
 			goto out;
@@ -4552,7 +4553,7 @@ void ieee80211_rx_napi(struct ieee80211_hw *hw, struct ieee80211_sta *pubsta,
 	struct ieee80211_rx_status *status = IEEE80211_SKB_RXCB(skb);
 
 	WARN_ON_ONCE(softirq_count() == 0);
-    printk("\nrx napi");
+    //printk("\nrx napi");
     kernel_print_packet(skb);
 
 	if (WARN_ON(status->band >= NUM_NL80211_BANDS))
