@@ -276,14 +276,17 @@ int iwl_drv_switch_op_mode(struct iwl_drv *drv, const char *new_op_name)
 	list_move_tail(&drv->list, &new_op->drv);
 	mutex_unlock(&iwlwifi_opmode_table_mtx);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	/* Starting the new op mode */
 	if (new_op->ops) {
 		drv->op_mode = _iwl_op_mode_start(drv, new_op);
+        pr_info("%s, line:%u\n", __func__, __LINE__);
 		if (!drv->op_mode) {
 			IWL_ERR(drv, "Error switching op modes\n");
 			return -EINVAL;
 		}
 	} else {
+        pr_info("%s, line:%u\n", __func__, __LINE__);
 		return request_module("%s", new_op->name);
 	}
 
@@ -1497,7 +1500,9 @@ _iwl_op_mode_start(struct iwl_drv *drv, struct iwlwifi_opmode_table *op)
 	dbgfs_dir = drv->dbgfs_op_mode;
 #endif
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	op_mode = ops->start(drv->trans, drv->trans->cfg, &drv->fw, dbgfs_dir);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	if (!op_mode) {
 #ifdef CPTCFG_IWLWIFI_DEBUGFS

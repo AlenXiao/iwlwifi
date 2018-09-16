@@ -346,6 +346,7 @@ static int ieee80211_ifa_changed(struct notifier_block *nb,
 	if (sdata->vif.type != NL80211_IFTYPE_STATION)
 		return NOTIFY_DONE;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	idev = __in_dev_get_rtnl(sdata->dev);
 	if (!idev)
 		return NOTIFY_DONE;
@@ -363,12 +364,14 @@ static int ieee80211_ifa_changed(struct notifier_block *nb,
 	}
 
 	bss_conf->arp_addr_cnt = c;
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	/* Configure driver only if associated (which also implies it is up) */
 	if (ifmgd->associated)
 		ieee80211_bss_info_change_notify(sdata,
 						 BSS_CHANGED_ARP_FILTER);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	sdata_unlock(sdata);
 
 #ifdef CPTCFG_IWLMVM_VENDOR_CMDS
@@ -556,6 +559,7 @@ struct ieee80211_hw *ieee80211_alloc_hw_nm(size_t priv_data_len,
 	priv_size = ALIGN(sizeof(*local), NETDEV_ALIGN) + priv_data_len;
 
 	wiphy = wiphy_new_nm(&mac80211_config_ops, priv_size, requested_name);
+    // scan in &mac80211_config_ops,
 
 	if (!wiphy)
 		return NULL;
@@ -1115,7 +1119,9 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 
 	local->hw.wiphy->max_num_csa_counters = IEEE80211_MAX_CSA_COUNTERS_NUM;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	result = wiphy_register(local->hw.wiphy);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (result < 0)
 		goto fail_wiphy_register;
 
@@ -1166,6 +1172,7 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 
 	ieee80211_led_init(local);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	result = ieee80211_txq_setup_flows(local);
 	if (result)
 		goto fail_flows;
@@ -1228,6 +1235,7 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	/* add one default STA interface if supported */
 	if (local->hw.wiphy->interface_modes & BIT(NL80211_IFTYPE_STATION) &&
 	    !ieee80211_hw_check(hw, NO_AUTO_VIF)) {
+        pr_info("add wlan%d\n", NET_NAME_ENUM);
 		result = ieee80211_if_add(local, "wlan%d", NET_NAME_ENUM, NULL,
 					  NL80211_IFTYPE_STATION, NULL);
 		if (result)
@@ -1236,6 +1244,7 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	}
 
 	rtnl_unlock();
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 #ifdef CONFIG_INET
 	local->ifa_notifier.notifier_call = ieee80211_ifa_changed;
@@ -1243,6 +1252,7 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	if (result)
 		goto fail_ifa;
 #endif
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 #if IS_ENABLED(CONFIG_IPV6)
 	local->ifa6_notifier.notifier_call = ieee80211_ifa6_changed;
@@ -1250,6 +1260,7 @@ int ieee80211_register_hw(struct ieee80211_hw *hw)
 	if (result)
 		goto fail_ifa6;
 #endif
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	return 0;
 

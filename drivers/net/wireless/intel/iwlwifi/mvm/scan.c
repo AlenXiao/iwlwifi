@@ -1637,6 +1637,7 @@ void iwl_mvm_scan_timeout_wk(struct work_struct *work)
 					   scan_timeout_dwork);
 
 	IWL_ERR(mvm, "regular scan timed out\n");
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	iwl_force_nmi(mvm->trans);
 }
@@ -1671,6 +1672,7 @@ int iwl_mvm_reg_scan_start(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
 	struct cfg80211_sched_scan_plan scan_plan = { .iterations = 1 };
 
 	lockdep_assert_held(&mvm->mutex);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	if (iwl_mvm_is_lar_supported(mvm) && !mvm->lar_regdom_set) {
 		IWL_ERR(mvm, "scan while LAR regdomain is not set\n");
@@ -1713,6 +1715,7 @@ int iwl_mvm_reg_scan_start(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
 	params.measurement_dwell = ret;
 
 	iwl_mvm_build_scan_probe(mvm, vif, ies, &params);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	if (fw_has_capa(&mvm->fw->ucode_capa, IWL_UCODE_TLV_CAPA_UMAC_SCAN)) {
 		hcmd.id = iwl_cmd_id(SCAN_REQ_UMAC, IWL_ALWAYS_LONG_GROUP, 0);
@@ -1727,6 +1730,8 @@ int iwl_mvm_reg_scan_start(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
 		return ret;
 
 	iwl_mvm_pause_tcm(mvm, false);
+
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	ret = iwl_mvm_send_cmd(mvm, &hcmd);
 	if (ret) {
@@ -1743,6 +1748,8 @@ int iwl_mvm_reg_scan_start(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
 	mvm->scan_status |= IWL_MVM_SCAN_REGULAR;
 	mvm->scan_vif = iwl_mvm_vif_from_mac80211(vif);
 	iwl_mvm_ref(mvm, IWL_MVM_REF_SCAN);
+
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	schedule_delayed_work(&mvm->scan_timeout_dwork,
 			      msecs_to_jiffies(SCAN_TIMEOUT));

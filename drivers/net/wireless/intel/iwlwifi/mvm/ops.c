@@ -86,6 +86,8 @@
 #include "fw/api/nan.h"
 #include "fw/acpi.h"
 
+#include "net/awss.h"
+
 #ifdef CPTCFG_IWLWIFI_DEVICE_TESTMODE
 #include "iwl-dnt-cfg.h"
 #include "iwl-dnt-dispatch.h"
@@ -138,7 +140,7 @@ static int __init iwl_mvm_init(void)
 
 	ret = iwl_mvm_rate_control_register();
 
-    printk("%s, %u", __func__, __LINE__);
+    pr_info("--------------------------------%s, %u\n", __func__, __LINE__);
 
 	if (ret) {
 		pr_err("Unable to register rate control algorithm: %d\n", ret);
@@ -148,6 +150,7 @@ static int __init iwl_mvm_init(void)
 	ret = iwl_opmode_register("iwlmvm", &iwl_mvm_ops);
 	if (ret)
 		pr_err("Unable to register MVM op_mode: %d\n", ret);
+    ret = awss_kernel_create_device();
 
 	return ret;
 }
@@ -155,6 +158,7 @@ module_init(iwl_mvm_init);
 
 static void __exit iwl_mvm_exit(void)
 {
+    awss_kernel_destroy_device();
 	iwl_opmode_deregister("iwlmvm");
 	iwl_mvm_rate_control_unregister();
 }
@@ -972,6 +976,7 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 
 	scan_size = iwl_mvm_scan_size(mvm);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	mvm->scan_cmd = kmalloc(scan_size, GFP_KERNEL);
 	if (!mvm->scan_cmd)
 		goto out_free;
@@ -980,41 +985,52 @@ iwl_op_mode_mvm_start(struct iwl_trans *trans, const struct iwl_cfg *cfg,
 	mvm->last_ebs_successful = true;
 
 	err = iwl_mvm_mac_setup_register(mvm);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (err)
 		goto out_free;
 	mvm->hw_registered = true;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	min_backoff = iwl_mvm_min_backoff(mvm);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	iwl_mvm_thermal_initialize(mvm, min_backoff);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	err = iwl_mvm_dbgfs_register(mvm, dbgfs_dir);
 	if (err)
 		goto out_unregister;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (!iwl_mvm_has_new_rx_stats_api(mvm))
 		memset(&mvm->rx_stats_v3, 0,
 		       sizeof(struct mvm_statistics_rx_v3));
 	else
 		memset(&mvm->rx_stats, 0, sizeof(struct mvm_statistics_rx));
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 #ifdef CPTCFG_IWLWIFI_FRQ_MGR
 	err = iwl_mvm_fm_register(mvm);
 	if (err)
 		pr_err("Unable to register with Frequency Manager: %d\n", err);
 #endif
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	/* The transport always starts with a taken reference, we can
 	 * release it now if d0i3 is supported */
 	if (iwl_mvm_is_d0i3_supported(mvm))
 		iwl_trans_unref(mvm->trans);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	iwl_mvm_tof_init(mvm);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 #ifdef CPTCFG_IWLWIFI_SUPPORT_DEBUG_OVERRIDES
 	iwl_mvm_init_modparams(mvm);
 #endif
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	iwl_mvm_toggle_tx_ant(mvm, &mvm->mgmt_last_antenna_idx);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	return op_mode;
 

@@ -58,6 +58,7 @@ static inline struct thermal_zone_device *old_thermal_zone_device_register(
 	struct thermal_zone_params *tzp =
 		(struct thermal_zone_params *)_tzp;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	return thermal_zone_device_register(type, trips, mask, devdata,
 					    ops, tzp, passive_delay,
 					    polling_delay);

@@ -75,7 +75,6 @@
 #include "iwl-trans.h"
 #include "iwl-drv.h"
 #include "internal.h"
-#include "awss.h"
 
 #define IWL_PCI_DEVICE(dev, subdev, cfg) \
 	.vendor = PCI_VENDOR_ID_INTEL,  .device = (dev), \
@@ -1089,13 +1088,10 @@ int __must_check iwl_pci_register_driver(void)
 	if (ret)
 		pr_err("Unable to initialize PCI module\n");
 
-    ret = awss_create_device();
-
 	return ret;
 }
 
 void iwl_pci_unregister_driver(void)
 {
-    awss_destroy_device();
 	pci_unregister_driver(&iwl_pci_driver);
 }

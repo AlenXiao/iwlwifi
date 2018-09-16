@@ -288,6 +288,8 @@ static inline int drv_hw_scan(struct ieee80211_local *local,
 	if (!check_sdata_in_driver(sdata))
 		return -EIO;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
+
 	trace_drv_hw_scan(local, sdata);
 	ret = local->ops->hw_scan(&local->hw, &sdata->vif, req);
 	trace_drv_return_int(local, ret);

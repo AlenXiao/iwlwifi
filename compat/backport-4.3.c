@@ -243,9 +243,11 @@ struct thermal_zone_device *backport_thermal_zone_device_register(
 #endif /* LINUX_VERSION_IS_GEQ(3, 19, 0) */
 #undef assign_ops
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	ret = old_thermal_zone_device_register(type, trips, mask, devdata,
 					       &wrapper->ops, tzp, passive_delay,
 					       polling_delay);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (!ret)
 		kfree(wrapper);
 	return ret;

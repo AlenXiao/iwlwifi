@@ -744,11 +744,13 @@ static void iwl_mvm_thermal_zone_register(struct iwl_mvm *mvm)
 
 	BUILD_BUG_ON(ARRAY_SIZE(name) >= THERMAL_NAME_LENGTH);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	mvm->tz_device.tzone = thermal_zone_device_register(name,
 							IWL_MAX_DTS_TRIPS,
 							IWL_WRITABLE_TRIPS_MSK,
 							mvm, &tzone_ops,
 							NULL, 0, 0);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (IS_ERR(mvm->tz_device.tzone)) {
 		IWL_DEBUG_TEMP(mvm,
 			       "Failed to register to thermal zone (err = %ld)\n",
@@ -824,11 +826,13 @@ static void iwl_mvm_cooling_device_register(struct iwl_mvm *mvm)
 
 	BUILD_BUG_ON(ARRAY_SIZE(name) >= THERMAL_NAME_LENGTH);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	mvm->cooling_dev.cdev =
 		thermal_cooling_device_register(name,
 						mvm,
 						&tcooling_ops);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (IS_ERR(mvm->cooling_dev.cdev)) {
 		IWL_DEBUG_TEMP(mvm,
 			       "Failed to register to cooling device (err = %ld)\n",
@@ -869,6 +873,7 @@ void iwl_mvm_thermal_initialize(struct iwl_mvm *mvm, u32 min_backoff)
 
 	IWL_DEBUG_TEMP(mvm, "Initialize Thermal Throttling\n");
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (mvm->cfg->thermal_params)
 		tt->params = *mvm->cfg->thermal_params;
 	else
@@ -879,10 +884,12 @@ void iwl_mvm_thermal_initialize(struct iwl_mvm *mvm, u32 min_backoff)
 	tt->min_backoff = min_backoff;
 	INIT_DELAYED_WORK(&tt->ct_kill_exit, check_exit_ctkill);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 #ifdef CONFIG_THERMAL
 	iwl_mvm_cooling_device_register(mvm);
 	iwl_mvm_thermal_zone_register(mvm);
 #endif
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	mvm->init_status |= IWL_MVM_INIT_STATUS_THERMAL_INIT_COMPLETE;
 }
 

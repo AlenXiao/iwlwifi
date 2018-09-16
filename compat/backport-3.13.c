@@ -288,14 +288,17 @@ devm_hwmon_device_register_with_groups(struct device *dev, const char *name,
 
 	if (!dev)
 		return ERR_PTR(-EINVAL);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	ptr = devres_alloc(devm_hwmon_release, sizeof(*ptr), GFP_KERNEL);
 	if (!ptr)
 		return ERR_PTR(-ENOMEM);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	hwdev = hwmon_device_register_with_groups(dev, name, drvdata, groups);
 	if (IS_ERR(hwdev))
 		goto error;
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	*ptr = hwdev;
 	devres_add(dev, ptr);

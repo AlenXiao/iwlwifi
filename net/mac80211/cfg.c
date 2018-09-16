@@ -2220,6 +2220,7 @@ static int ieee80211_scan(struct wiphy *wiphy,
 	struct ieee80211_sub_if_data *sdata;
 
 	sdata = IEEE80211_WDEV_TO_SUB_IF(req->wdev);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	switch (ieee80211_vif_type_p2p(&sdata->vif)) {
 	case NL80211_IFTYPE_STATION:
@@ -2255,6 +2256,7 @@ static int ieee80211_scan(struct wiphy *wiphy,
 		return -EOPNOTSUPP;
 	}
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	return ieee80211_request_scan(sdata, req);
 }
 

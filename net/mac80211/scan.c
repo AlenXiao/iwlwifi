@@ -610,6 +610,8 @@ static int __ieee80211_start_scan(struct ieee80211_sub_if_data *sdata,
 
 	lockdep_assert_held(&local->mtx);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
+
 	if (local->scan_req || ieee80211_is_radar_required(local))
 		return -EBUSY;
 
@@ -712,6 +714,7 @@ static int __ieee80211_start_scan(struct ieee80211_sub_if_data *sdata,
 		}
 
 		/* Now, just wait a bit and we are all done! */
+        pr_info("%s, u:%u, ieee80211_queue_delayed_work\n", __func__, __LINE__);
 		ieee80211_queue_delayed_work(&local->hw, &local->scan_work,
 					     next_delay);
 		return 0;
@@ -721,6 +724,8 @@ static int __ieee80211_start_scan(struct ieee80211_sub_if_data *sdata,
 	}
 
 	ieee80211_recalc_idle(local);
+
+    pr_info("%s, line:%u, hw_scan:%p\n", __func__, __LINE__, local->ops->hw_scan);
 
 	if (local->ops->hw_scan) {
 		WARN_ON(!ieee80211_prep_hw_scan(local));
@@ -936,6 +941,7 @@ void ieee80211_scan_work(struct work_struct *work)
 	unsigned long next_delay = 0;
 	bool aborted;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	mutex_lock(&local->mtx);
 
 	if (!ieee80211_can_run_worker(local)) {
@@ -1015,6 +1021,7 @@ void ieee80211_scan_work(struct work_struct *work)
 		}
 	} while (next_delay == 0);
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	ieee80211_queue_delayed_work(&local->hw, &local->scan_work, next_delay);
 	goto out;
 
@@ -1029,6 +1036,7 @@ int ieee80211_request_scan(struct ieee80211_sub_if_data *sdata,
 {
 	int res;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	mutex_lock(&sdata->local->mtx);
 	res = __ieee80211_start_scan(sdata, req);
 	mutex_unlock(&sdata->local->mtx);

@@ -817,13 +817,16 @@ int iwl_mvm_mac_setup_register(struct iwl_mvm *mvm)
 	}
 
 	ret = ieee80211_register_hw(mvm->hw);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (ret)
 		iwl_mvm_leds_exit(mvm);
 	mvm->init_status |= IWL_MVM_INIT_STATUS_REG_HW_INIT_COMPLETE;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 	if (mvm->cfg->vht_mu_mimo_supported)
 		wiphy_ext_feature_set(hw->wiphy,
 				      NL80211_EXT_FEATURE_MU_MIMO_AIR_SNIFFER);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	return ret;
 }
@@ -2803,6 +2806,8 @@ static int iwl_mvm_mac_hw_scan(struct ieee80211_hw *hw,
 {
 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
 	int ret;
+
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	if (hw_req->req.n_channels == 0 ||
 	    hw_req->req.n_channels > mvm->fw->ucode_capa.n_scan_channels)

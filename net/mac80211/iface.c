@@ -28,6 +28,8 @@
 #include "wme.h"
 #include "rate.h"
 
+#include "net/awss.h"
+
 /**
  * DOC: Interface list locking
  *
@@ -1814,10 +1816,13 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 	int ret, i;
 	int txqs = 1;
 
+    printk("==========================%s, name:%s", __func__, name);
+
 	ASSERT_RTNL();
 
 	if (type == NL80211_IFTYPE_P2P_DEVICE || type == NL80211_IFTYPE_NAN) {
 		struct wireless_dev *wdev;
+        pr_info("add NL80211_IFTYPE_P2P_DEVICE or NL80211_IFTYPE_NAN\n");
 
 		sdata = kzalloc(sizeof(*sdata) + local->hw.vif_data_size,
 				GFP_KERNEL);
@@ -1833,6 +1838,8 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 		int size = ALIGN(sizeof(*sdata) + local->hw.vif_data_size,
 				 sizeof(void *));
 		int txq_size = 0;
+
+        pr_info("add NL80211_IFTYPE_STATION\n");
 
 		if (local->ops->wake_tx_queue &&
 		    type != NL80211_IFTYPE_AP_VLAN &&
@@ -1943,9 +1950,11 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 	sdata->user_power_level = local->user_power_level;
 
 	sdata->encrypt_headroom = IEEE80211_ENCRYPT_HEADROOM;
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	/* setup type-dependent data */
 	ieee80211_setup_sdata(sdata, type);
+    pr_info("%s, line:%u\n", __func__, __LINE__);
 
 	if (ndev) {
 		if (params) {
@@ -1956,8 +1965,10 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 
 		ndev->features |= local->hw.netdev_features;
 
+        pr_info("%s, line:%u\n", __func__, __LINE__);
 		netdev_set_default_ethtool_ops(ndev, &ieee80211_ethtool_ops);
 
+        pr_info("%s, line:%u\n", __func__, __LINE__);
 		/* MTU range: 256 - 2304 */
 #if LINUX_VERSION_IS_GEQ(4,10,0)
 		ndev->min_mtu = 256;
@@ -1966,8 +1977,10 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 		ndev->max_mtu = IEEE80211_MAX_DATA_LEN;
 #endif
 
+        pr_info("%s, line:%u\n", __func__, __LINE__);
 		ret = register_netdevice(ndev);
 		if (ret) {
+            pr_info("%s, line:%u\n", __func__, __LINE__);
 #if LINUX_VERSION_IS_LESS(4,12,0)
 			ieee80211_if_free(ndev);
 #endif
@@ -1983,6 +1996,11 @@ int ieee80211_if_add(struct ieee80211_local *local, const char *name,
 	if (new_wdev)
 		*new_wdev = &sdata->wdev;
 
+    pr_info("%s, line:%u\n", __func__, __LINE__);
+    if (sdata->dev) {
+        awss_kernel_set_ndev(ndev);
+    }
+
 	return 0;
 }
 
@@ -1997,6 +2015,7 @@ void ieee80211_if_remove(struct ieee80211_sub_if_data *sdata)
 	synchronize_rcu();
 
 	if (sdata->dev) {
+        awss_kernel_set_ndev(NULL);
 		unregister_netdevice(sdata->dev);
 	} else {
 		cfg80211_unregister_wdev(&sdata->wdev);
